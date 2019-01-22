@@ -7,4 +7,5 @@
     <color name="rippleEffectColor">#d3b023</color>
     <color name="btnSignInColor">#efc20e</color>
     <color name="btnRegisterColor">#262525</color>
+    <color name="txtForm">#262525</color>
 </resources>
