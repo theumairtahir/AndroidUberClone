@@ -1,18 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/car_bg">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        android:gravity="center_horizontal"
+        android:backgroundTintMode="screen">
+        <TextView
+            android:id="@+id/heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="my cab"
+            android:textColor="@android:color/white"
+            android:textSize="46sp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:gravity="bottom"
+            android:shadowColor="@android:color/white"
+            android:textAlignment="center"
+            />
+        <TextView
+            android:id="@+id/heading2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="driver"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:gravity="bottom"
+            android:shadowColor="@android:color/white"
+            android:textAlignment="center"
+            android:layout_marginTop="5sp"
+            />
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/txt_rider_app"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Looking for the riding app?"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:textColor="@color/bottomText"
+        />
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_above="@id/txt_rider_app"
+        android:layout_margin="16dp"
+        android:layout_centerHorizontal="true"
+
+        >
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:text="Sign In"
+            android:id="@+id/btnSignIn"
+            android:textColor="@android:color/white"
+            android:layout_weight="1"
+            android:background="@drawable/btn_sign_in_background"
+            />
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:text="Register"
+            android:id="@+id/btnRegister"
+            android:textColor="@android:color/white"
+            android:layout_weight="1"
+            android:background="@drawable/btn_register_background"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
