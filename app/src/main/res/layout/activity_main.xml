@@ -12,7 +12,7 @@
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/black"
         android:gravity="center_horizontal"
         android:backgroundTintMode="screen">
         <TextView
@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="my cab"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="46sp"
             android:textAllCaps="true"
             android:textStyle="bold"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="driver"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             android:textAllCaps="true"
             android:textStyle="bold"
