@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import dmax.dialog.SpotsDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import ut786.clone.AndroidUberClone.Models.User;
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.dismiss();
+                    //disable sign in button if signing in is in progress
+                    btnSignIn.setEnabled(false);
                     //check validation
                     if (TextUtils.isEmpty(edtEmail.getText())) {
                         Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
@@ -104,17 +107,28 @@ public class MainActivity extends AppCompatActivity {
                         Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
                         return;
                     }
+                    final AlertDialog waitingDialog =new SpotsDialog(MainActivity.this);
+                    waitingDialog.show();
                     //Login
                     auth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPass.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            startActivity(new Intent(MainActivity.this, Welcome.class));
+                            waitingDialog.dismiss();
+                            try {
+                                startActivity(new Intent(MainActivity.this, Welcome.class));
+                            }
+                            catch (Exception ex){
+                                Toast.makeText(MainActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                            }
                             finish();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            waitingDialog.dismiss();
                             Snackbar.make(rootLayout, "Sign In Failed. " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            //active sign in button again
+                            btnSignIn.setEnabled(true);
                         }
                     });
                 }
