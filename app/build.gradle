@@ -32,6 +32,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //add library
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
     implementation 'com.github.glomadrian:MaterialAnimatedSwitch:1.1@aar'
     implementation 'com.firebase:geofire-android:2.1.2'
     implementation 'com.google.firebase:firebase-database:11.8.0'
