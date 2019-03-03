@@ -2,4 +2,5 @@
     <string name="app_name">AndroidUberClone</string>
     <string name="title_activity_welcome">Map</string>
     <string name="google_direction_api">AIzaSyC7ttVw0aTRewunw2h3h-Uh-IX3x7y_PIg</string>
+    <!--<string name="google_direction_api">AIzaSyCXuE_ahQg6bmxL5ZXEmmPLUI-LaWGZZes</string>-->
 </resources>

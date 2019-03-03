@@ -64,6 +64,8 @@ import retrofit2.Response;
 import ut786.clone.AndroidUberClone.Common.Common;
 import ut786.clone.AndroidUberClone.Remote.IGoogleApi;
 
+import static ut786.clone.AndroidUberClone.R.id.location_switch;
+
 //import android.location.LocationListener;
 
 public class Welcome extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -105,7 +107,9 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     Runnable drawPathRunnable=new Runnable() {
         @Override
         public void run() {
+            //this code will provide the animation to the car on map
             if(index<lstPolyLine.size()-1){
+                //if there's no route
                 index++;
                 next=index+1;
             }
@@ -119,22 +123,27 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
+                    //updates the animation position wrt the position
                     v=valueAnimator.getAnimatedFraction();
+                    //calculates the updating points
                     lng=v*endPosition.longitude+(1-v)+startPosition.longitude;
                     lat=v*endPosition.latitude+(1-v)*startPosition.latitude;
-                    LatLng newPos=new LatLng(lng,lat);
+                    LatLng newPos=new LatLng(lng,lat); //new location
+                    //set marker to the new location
                     carMarker.setPosition(newPos);
                     carMarker.setAnchor(0.5f,0.5f);
                     carMarker.setRotation(getBearing(startPosition,newPos));
+                    //move camera wrt to the cab pointer
                     mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(newPos).zoom(15.5f).build()));
                 }
             });
             valueAnimator.start();
-            handler.postDelayed(this,3000);
+            handler.postDelayed(this,3000); //creates a delay of updation
         }
     };
 
     private float getBearing(LatLng startPosition, LatLng endPosition) {
+        //method to get thee rotation angle of the cab marker
         double lat =Math.abs(startPosition.latitude-endPosition.latitude);
         double lng=Math.abs(startPosition.longitude-endPosition.longitude);
         if(startPosition.latitude<endPosition.latitude && startPosition.longitude<endPosition.longitude){
@@ -161,9 +170,9 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         //initiate view
-        locationSwitch=(Switch)findViewById(R.id.location_switch);
-        btnGo=(Button)findViewById(R.id.btnGo);
-        edtPlace=(EditText)findViewById(R.id.edtPlace);
+        locationSwitch= findViewById(location_switch);
+        btnGo= findViewById(R.id.btnGo);
+        edtPlace= findViewById(R.id.edtPlace);
         lstPolyLine=new ArrayList<>();
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,19 +205,25 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                 }
             }
         });
-        
+        //START OF DATABASE ACTIVITY
         //Geo Fire Settings
-        drivers= FirebaseDatabase.getInstance().getReference("Drivers");
-        geoFire=new GeoFire(drivers);
-        setUpLocation();
+        drivers= FirebaseDatabase.getInstance().getReference("Drivers"); //CREATES DRIVER INSTANCE IN FIREBASE DATABASE
+        geoFire=new GeoFire(drivers); //update location on the database
+        //END OF DATABASE ACTIVITY
+        setUpLocation(); //set the location of the driver on the map
     }
 
     private void getDirection() {
-        currentPosition = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-        String requestApi=null;
+        //Method to get direction to some destination
+        currentPosition = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()); //getting the current position from the db
+        String requestApi=null; //API request to get the routes and direction
         try{
             requestApi="https://maps.googleapis.com/maps/api/directions/json?mode=driving&transit_routing_preference=less_driving&origin="+currentPosition.latitude+","+currentPosition.longitude+"&destination="+destination+"&key="+getResources().getString(R.string.google_direction_api);
-            Log.d("ut786",requestApi);
+            Log.d("ut786",requestApi); //print into the log ot test
+            /*rest is the code to get the API response
+            in the form of JSON Object
+            and convert to the android object
+             */
             mService.gotPath(requestApi).enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -219,15 +234,15 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                             JSONObject route=jsonArray.getJSONObject(i);
                             JSONObject poly=route.getJSONObject("overview_polyline");
                             String polyline=poly.getString("points");
-                            lstPolyLine=decodePoly(polyline);
+                            lstPolyLine=decodePoly(polyline); //decoding route points into poly line list
                         }
                         //adjusting bounds
-                        LatLngBounds.Builder builder=new LatLngBounds.Builder();
+                        LatLngBounds.Builder builder=new LatLngBounds.Builder(); //building the location bounds
                         for(LatLng latLng:lstPolyLine)
                             builder.include(latLng);
-                        LatLngBounds bounds=builder.build();
-                        CameraUpdate mCameraUpdate=CameraUpdateFactory.newLatLngBounds(bounds,2);
-                        mMap.animateCamera(mCameraUpdate);
+                        LatLngBounds bounds=builder.build(); //assigning the bounds
+                        CameraUpdate mCameraUpdate=CameraUpdateFactory.newLatLngBounds(bounds,2); //updates the camera according to the bounds
+                        mMap.animateCamera(mCameraUpdate); //camera animation
                         //polyline settings for grey polyline
                         greyPolylineOptions =new PolylineOptions();
                         greyPolylineOptions.color(Color.GRAY);
@@ -284,7 +299,10 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private List decodePoly(String encoded) {
-
+        /*
+        Method to decode polyline from JSON Object downloaded from gitHub
+        https://github.com/gripsack/android/blob/master/app/src/main/java/com/github/gripsack/android/data/model/DirectionsJSONParser.java
+         */
         List poly = new ArrayList();
         int index = 0, len = encoded.length();
         int lat = 0, lng = 0;
@@ -318,11 +336,13 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private void setUpLocation() {
+        //method to set the current location of the driver
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
             //Request runtime permission
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSION_REQUEST_CODE);
         }
         else {
+            //when request granted
             if(checkPlayServices()){
                 buildGoogleApiClient();
                 createLocationRequest();
@@ -333,11 +353,13 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
         }
     }
     private void buildGoogleApiClient(){
+        //connect to the google location API to get the location
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
         mGoogleApiClient.connect();
 
     }
     private void createLocationRequest() {
+        //getting the location updates
         mLocationRequest=new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
@@ -346,6 +368,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private boolean checkPlayServices() {
+        //METHOD TO CHECK THE PLAY SERVICES ON THE DRIVER'S PHONE
         int resultCode= GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if(resultCode!=ConnectionResult.SUCCESS){
             if(GooglePlayServicesUtil.isUserRecoverableError(resultCode))
@@ -360,6 +383,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private void stopLocationUpdates() {
+        //method to stop getting location updates
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
             return;
         }
@@ -367,15 +391,18 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private void displayLocation() {
+        //METHOD TO SHOW THE CURRENT LOCATION ON THE MAP WITH A CAB MARKER
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
+            //if permission of accessing location is not granted the method stops here
             return;
         }
-        mLastLocation=LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mLastLocation=LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient); //getting the last location of the driver stored on the cloud
         if(mLastLocation!=null){
             if(locationSwitch.isChecked()){
                 final double LONGITUDE=mLastLocation.getLongitude();
                 final double LATITUDE=mLastLocation.getLatitude();
                 //update the location to firebase
+                //START OF DATABASE ACTIVITY
                 geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(), new GeoLocation(LATITUDE, LONGITUDE), new GeoFire.CompletionListener() {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
@@ -389,6 +416,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
                         //rotateMarker(mCurrent,-360,mMap);
                     }
                 });
+                //END OF DATABASE ACTIVITY
             }
         }
         else
@@ -397,6 +425,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
     }
 
     private void rotateMarker(final Marker mCurrent, final float i, GoogleMap mMap) {
+        //METHOD TO SET THE MARKER ROTATION ACCORDING TO THE DIRECTIONS
         final Handler handler=new Handler();
         final long start= SystemClock.uptimeMillis();
         final float startRotation=mCurrent.getRotation();
@@ -442,6 +471,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //map settings
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setTrafficEnabled(false);
@@ -452,7 +482,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback, Goo
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation=location;
+        mLastLocation=location; //save current location to last location
         displayLocation();
     }
 
