@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -56,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
 
             //initiate views
-            btnRegister = (Button) findViewById(R.id.btnRegister);
-            btnSignIn = (Button) findViewById(R.id.btnSignIn);
-            rootLayout = (RelativeLayout) findViewById(R.id.rootLayout);
+            btnRegister = findViewById(R.id.btnRegister);
+            btnSignIn = findViewById(R.id.btnSignIn);
+            rootLayout = findViewById(R.id.rootLayout);
 
             //adding events
             btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -100,11 +99,11 @@ public class MainActivity extends AppCompatActivity {
                     btnSignIn.setEnabled(false);
                     //check validation
                     if (TextUtils.isEmpty(edtEmail.getText())) {
-                        Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter email address",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (TextUtils.isEmpty(edtPass.getText())) {
-                        Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter password",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     final AlertDialog waitingDialog =new SpotsDialog(MainActivity.this);
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                         public void onFailure(@NonNull Exception e) {
                             waitingDialog.dismiss();
                             Toast.makeText(MainActivity.this,"Login Failed",Toast.LENGTH_LONG).show();
-                            //Snackbar.make(rootLayout, "Sign In Failed. " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                             //active sign in button again
                             btnSignIn.setEnabled(true);
                         }
@@ -168,23 +166,23 @@ public class MainActivity extends AppCompatActivity {
                     dialogInterface.dismiss();
                     //check validation
                     if (TextUtils.isEmpty(edtEmail.getText())) {
-                        Snackbar.make(rootLayout, "Please enter email address", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter email address",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (TextUtils.isEmpty(edtPass.getText())) {
-                        Snackbar.make(rootLayout, "Please enter password", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter email password",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (TextUtils.isEmpty(edtName.getText())) {
-                        Snackbar.make(rootLayout, "Please enter name", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter name",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (TextUtils.isEmpty(edtPhone.getText())) {
-                        Snackbar.make(rootLayout, "Please enter phone", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Please enter phone",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (edtPass.getText().length() < 6) {
-                        Snackbar.make(rootLayout, "Pass must contain at-least 6 characters", Snackbar.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,"Password must contain 6 letters",Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -198,13 +196,13 @@ public class MainActivity extends AppCompatActivity {
                             users.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Snackbar.make(rootLayout, "Registered Successfully", Snackbar.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,"Registered Successfully",Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Snackbar.make(rootLayout, "Failed!" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this,"Failed to register",Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                             });
@@ -212,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Snackbar.make(rootLayout, "Failed!" + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this,"Failed to register",Toast.LENGTH_SHORT).show();
                             return;
                         }
                     });
