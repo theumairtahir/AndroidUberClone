@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">AndroidUberClone</string>
-    <string name="title_activity_welcome">Map</string>
-    <!--API key will be entered by the developer-->
-    <string name="google_direction_api"></string>
-</resources>
